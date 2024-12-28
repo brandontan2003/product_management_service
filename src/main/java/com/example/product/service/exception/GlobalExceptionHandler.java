@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -32,7 +33,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ResponsePayload<ErrorsPayload>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ResponsePayload<ErrorsPayload>> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
         List<String> errorDescriptions = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -48,5 +50,16 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponsePayload.<ErrorsPayload>builder()
                 .status(STATUS_ERROR).result(ErrorsPayload.builder().errors(errorList).build()).build());
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ResponsePayload<ErrorPayload>> handleRequestParametersValidation(
+            MissingServletRequestParameterException ex) {
+        Error err = getError(FIELD_VALIDATION_ERROR);
+        err.setErrorMessage(ex.getParameterName() + " is required.");
+
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponsePayload.<ErrorPayload>builder()
+                .status(STATUS_ERROR).result(ErrorPayload.builder().error(err).build()).build());
     }
 }

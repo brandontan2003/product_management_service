@@ -30,7 +30,7 @@ public class ProductController {
 
     @GetMapping(API_VERSION_1 + RETRIEVE_URL + DETAILS_URL)
     public ResponsePayload<RetrieveProductDetailResponse> retrieveProductDetails(
-            @RequestParam(name = "productId") String productId) {
+            @Valid @RequestParam(name = "productId") String productId) {
         return ResponsePayload.<RetrieveProductDetailResponse>builder().status(STATUS_SUCCESS)
                 .result(productService.retrieveProductDetails(productId)).build();
     }
