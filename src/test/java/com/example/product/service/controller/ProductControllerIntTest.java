@@ -84,7 +84,7 @@ public class ProductControllerIntTest {
     @MethodSource("test_createProduct_Failure")
     void createProduct_Failure(String name, CreateProductRequest request, Path expectedOutput) throws Exception {
         String actualResponse = mvc.perform(post(API_PRODUCT + API_VERSION_1 + CREATE_URL)
-                        .content(new ObjectMapper().writeValueAsString(request))
+                        .content(writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
@@ -97,8 +97,7 @@ public class ProductControllerIntTest {
     @Test
     void createProduct_Success() throws Exception {
         String actualResponse = mvc.perform(post(API_PRODUCT + API_VERSION_1 + CREATE_URL)
-                        .content(new ObjectMapper().writeValueAsString(buildCreateProductRequest(PRODUCT_NAME,
-                                PRODUCT_DESC, PRICE)))
+                        .content(writeValueAsString(buildCreateProductRequest(PRODUCT_NAME, PRODUCT_DESC, PRICE)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();

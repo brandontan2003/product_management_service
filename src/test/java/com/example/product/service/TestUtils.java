@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TestUtils {
 
-    public static String writeValueAsString(String value) throws JsonProcessingException {
+    public static <T> String writeValueAsString(T value) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(value);
     }
 }
