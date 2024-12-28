@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
@@ -16,6 +17,7 @@ import static com.example.product.service.constant.ErrorConstant.*;
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class CreateProductRequest {
 
     @NotBlank(message = PRODUCT_NAME_EMPTY_ERROR)
