@@ -3,6 +3,7 @@ package com.example.product.service.controller;
 import com.example.product.service.dto.CreateProductRequest;
 import com.example.product.service.dto.CreateProductResponse;
 import com.example.product.service.dto.ResponsePayload;
+import com.example.product.service.model.Product;
 import com.example.product.service.repository.ProductRepository;
 import com.example.product.service.service.ProductService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -29,6 +30,7 @@ import java.util.stream.Stream;
 
 import static com.example.product.service.TestUtils.writeValueAsString;
 import static com.example.product.service.constant.UriConstant.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -109,6 +111,26 @@ public class ProductControllerIntTest {
         String expectedOutput = Files.readString(basePath.resolve("create_product").resolve(
                 "product_created_successfully.json"));
         expectedOutput = expectedOutput.replace("#productId#", responsePayload.getResult().getProductId());
+        log.info("Expected Response: " + writeValueAsString(actualResponse));
+
+        JSONAssert.assertEquals(expectedOutput, actualResponse, JSONCompareMode.LENIENT);
+    }
+
+    @Test
+    void retrieveProductDetails_Success() throws Exception {
+        Product product = productRepository.saveAndFlush(productService.create(buildCreateProductRequest(PRODUCT_NAME,
+                PRODUCT_DESC, PRICE)));
+
+        String actualResponse = mvc.perform(get(API_PRODUCT + API_VERSION_1 + RETRIEVE_URL + DETAILS_URL
+                        + "?productId=" + product.getProductId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn().getResponse().getContentAsString();
+        log.info("Actual Response: " + writeValueAsString(actualResponse));
+
+        String expectedOutput = Files.readString(basePath.resolve("retrieve_product").resolve(
+                "product_retrieved_successfully.json"));
+        expectedOutput = expectedOutput.replace("#productId#", product.getProductId());
         log.info("Expected Response: " + writeValueAsString(actualResponse));
 
         JSONAssert.assertEquals(expectedOutput, actualResponse, JSONCompareMode.LENIENT);
