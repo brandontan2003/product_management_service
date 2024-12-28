@@ -5,6 +5,7 @@ import com.example.product.service.dto.CreateProductResponse;
 import com.example.product.service.dto.ResponsePayload;
 import com.example.product.service.dto.RetrieveProductDetailResponse;
 import com.example.product.service.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class ProductController {
     @PostMapping(API_VERSION_1 + CREATE_URL)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponsePayload<CreateProductResponse> createProduct(
-            @RequestBody CreateProductRequest createProductRequest) {
+            @Valid @RequestBody CreateProductRequest createProductRequest) {
         return ResponsePayload.<CreateProductResponse>builder().status(STATUS_SUCCESS).result(CreateProductResponse.builder()
                 .productId(productService.create(createProductRequest).getProductId()).build()).build();
     }
