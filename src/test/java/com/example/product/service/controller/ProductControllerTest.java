@@ -1,13 +1,17 @@
 package com.example.product.service.controller;
 
+import com.example.product.service.dto.CreateProductRequest;
+import com.example.product.service.dto.CreateProductResponse;
 import com.example.product.service.dto.ResponsePayload;
 import com.example.product.service.dto.RetrieveProductDetailResponse;
 import com.example.product.service.exception.ProductErrorMessage;
 import com.example.product.service.exception.ProductErrorMessage.*;
 import com.example.product.service.exception.ProductException;
+import com.example.product.service.model.Product;
 import com.example.product.service.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,7 +22,8 @@ import java.util.UUID;
 import static com.example.product.service.constant.ApiConstant.STATUS_SUCCESS;
 import static com.example.product.service.exception.ProductErrorMessage.PRODUCT_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ProductControllerTest {
@@ -63,5 +68,34 @@ public class ProductControllerTest {
         assertEquals(ex.getErrorMessage().getHttpStatus(), PRODUCT_NOT_FOUND.getHttpStatus());
         assertEquals(ex.getErrorMessage().getErrorCode(), PRODUCT_NOT_FOUND.getErrorCode());
         assertEquals(ex.getErrorMessage().getErrorMessage(), PRODUCT_NOT_FOUND.getErrorMessage());
+    }
+
+    private static CreateProductRequest buildCreateProductRequest() {
+        CreateProductRequest request = new CreateProductRequest();
+        request.setProductName(PRODUCT_NAME);
+        request.setProductDesc(PRODUCT_DESC);
+        request.setPrice(PRICE);
+        return request;
+    }
+
+    private static Product getProduct() {
+        Product product = new Product();
+        product.setProductId(PRODUCT_ID);
+        product.setProductName(PRODUCT_NAME);
+        product.setProductDesc(PRODUCT_DESC);
+        product.setPrice(PRICE);
+        return product;
+    }
+
+    @Test
+    void createProduct_Success() {
+        CreateProductRequest request = buildCreateProductRequest();
+        when(productService.create(request)).thenReturn(getProduct());
+
+        ResponsePayload<CreateProductResponse> actualResponse = productController.createProduct(request);
+
+        assertNotNull(actualResponse);
+        assertEquals(STATUS_SUCCESS, actualResponse.getStatus());
+        assertNotNull(actualResponse.getResult().getProductId());
     }
 }
