@@ -1,0 +1,49 @@
+version: "3.7"
+
+services:
+  product-management-service:
+    init: true
+    build:
+      dockerfile: ./Dockerfile
+    image: product-management-service:latest
+    env_file:
+      - ./env/docker.env
+    working_dir: /app
+    container_name: product-management-service
+    depends_on:
+      - product-management-service-flyway
+    ports:
+      - '8080:8080'
+    restart: on-failure
+
+  product-management-service-mysql:
+    init: true
+    image: mysql:8.0.26
+    container_name: product-management-service-mysql
+    env_file:
+      - ./env/docker.env
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  product-management-service-flyway:
+    init: true
+    image: flyway/flyway
+    container_name: product-management-service-flyway
+    command: -url='jdbc:mysql://product-management-service-mysql/product_management_service_db?allowPublicKeyRetrieval=true&useSSL=false' -schemas=product_management_service_db  -user=admin -password=admin -connectRetries=60 repair migrate
+    volumes:
+      - ./main/resources/db-migration:/flyway/sql
+    depends_on:
+      - product-management-service-mysql
+    restart: on-failure
+
+
+volumes:
+  mysql-data:
+    driver: local
+
+networks:
+  default:
+    name: product-management-service
