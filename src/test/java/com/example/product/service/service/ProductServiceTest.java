@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.example.product.service.exception.ProductErrorMessage.PRODUCT_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -73,10 +74,10 @@ public class ProductServiceTest {
         ProductException ex = assertThrows(ProductException.class, () -> productService
                 .retrieveProductDetails(PRODUCT_ID));
 
-        assertEquals(ex.getErrorMessage(), ProductErrorMessage.PRODUCT_NOT_FOUND);
-        assertEquals(ex.getErrorMessage().getHttpStatus(), ProductErrorMessage.PRODUCT_NOT_FOUND.getHttpStatus());
-        assertEquals(ex.getErrorMessage().getErrorCode(), ProductErrorMessage.PRODUCT_NOT_FOUND.getErrorCode());
-        assertEquals(ex.getErrorMessage().getErrorMessage(), ProductErrorMessage.PRODUCT_NOT_FOUND.getErrorMessage());
+        assertEquals(ex.getErrorMessage(), PRODUCT_NOT_FOUND);
+        assertEquals(ex.getErrorMessage().getHttpStatus(), PRODUCT_NOT_FOUND.getHttpStatus());
+        assertEquals(ex.getErrorMessage().getErrorCode(), PRODUCT_NOT_FOUND.getErrorCode());
+        assertEquals(ex.getErrorMessage().getErrorMessage(), PRODUCT_NOT_FOUND.getErrorMessage());
     }
 
     private static CreateProductRequest buildCreateProductRequest() {
