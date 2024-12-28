@@ -1,12 +1,11 @@
-package com.example.product.service.dto;
+package com.example.product.service.dto.error;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.http.HttpStatus;
 
 @Data
 @Builder
-public class ErrorPayload {
+public class Error {
 
     private String errorCode;
     private String errorMessage;

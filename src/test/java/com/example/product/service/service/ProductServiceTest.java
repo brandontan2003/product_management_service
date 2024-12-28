@@ -71,7 +71,7 @@ public class ProductServiceTest {
         assertEquals(ex.getErrorMessage(), ProductErrorMessage.PRODUCT_NOT_FOUND);
         assertEquals(ex.getErrorMessage().getHttpStatus(), ProductErrorMessage.PRODUCT_NOT_FOUND.getHttpStatus());
         assertEquals(ex.getErrorMessage().getErrorCode(), ProductErrorMessage.PRODUCT_NOT_FOUND.getErrorCode());
-        assertEquals(ex.getErrorMessage().getErrorDesc(), ProductErrorMessage.PRODUCT_NOT_FOUND.getErrorDesc());
+        assertEquals(ex.getErrorMessage().getErrorMessage(), ProductErrorMessage.PRODUCT_NOT_FOUND.getErrorMessage());
     }
 
 }
