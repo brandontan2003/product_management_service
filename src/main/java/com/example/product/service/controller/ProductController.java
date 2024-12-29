@@ -1,9 +1,6 @@
 package com.example.product.service.controller;
 
-import com.example.product.service.dto.CreateProductRequest;
-import com.example.product.service.dto.CreateProductResponse;
-import com.example.product.service.dto.ResponsePayload;
-import com.example.product.service.dto.RetrieveProductDetailResponse;
+import com.example.product.service.dto.*;
 import com.example.product.service.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +30,12 @@ public class ProductController {
             @Valid @RequestParam(name = "productId") String productId) {
         return ResponsePayload.<RetrieveProductDetailResponse>builder().status(STATUS_SUCCESS)
                 .result(productService.retrieveProductDetails(productId)).build();
+    }
+
+    @PutMapping(API_VERSION_1 + UPDATE_URL)
+    public ResponsePayload<RetrieveProductDetailResponse> updateProduct(
+            @Valid @RequestBody UpdateProductRequest updateProductRequest) {
+        return ResponsePayload.<RetrieveProductDetailResponse>builder().status(STATUS_SUCCESS)
+                .result(productService.update(updateProductRequest)).build();
     }
 }

@@ -2,13 +2,19 @@ package com.example.product.service.service;
 
 import com.example.product.service.dto.CreateProductRequest;
 import com.example.product.service.dto.RetrieveProductDetailResponse;
+import com.example.product.service.dto.UpdateProductRequest;
 import com.example.product.service.exception.ProductErrorMessage;
 import com.example.product.service.exception.ProductException;
 import com.example.product.service.model.Product;
 import com.example.product.service.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
+import static com.example.product.service.constant.UtilityConstant.NULL_IDENTIFIER;
 
 @Service
 public class ProductService {
@@ -18,12 +24,10 @@ public class ProductService {
     @Autowired
     private ModelMapper mapper;
 
+    @Transactional
     public Product create(CreateProductRequest request) {
         Product product = new Product();
-        product.setProductName(request.getProductName());
-        product.setProductDesc(request.getProductDesc());
-        product.setPrice(request.getPrice());
-
+        BeanUtils.copyProperties(request, product);
         return productRepository.saveAndFlush(product);
     }
 
@@ -32,4 +36,30 @@ public class ProductService {
                 .orElseThrow(() -> new ProductException(ProductErrorMessage.PRODUCT_NOT_FOUND));
         return mapper.map(product, RetrieveProductDetailResponse.class);
     }
+
+    @Transactional
+    public RetrieveProductDetailResponse update(UpdateProductRequest request) {
+        String productId = request.getProductId();
+        Product product = productRepository.findByProductId(productId).orElseThrow(() ->
+                new ProductException(ProductErrorMessage.PRODUCT_NOT_FOUND));
+
+        productRepository.saveAndFlush(updateCopyProperties(request, product));
+        return retrieveProductDetails(productId);
+    }
+
+    private Product updateCopyProperties(UpdateProductRequest request, Product product) {
+        if (!ObjectUtils.isEmpty(request.getProductName())) {
+            product.setProductName(NULL_IDENTIFIER.equalsIgnoreCase(request.getProductName()) ? null :
+                    request.getProductName());
+        }
+        if (!ObjectUtils.isEmpty(request.getProductDesc())) {
+            product.setProductDesc(NULL_IDENTIFIER.equalsIgnoreCase(request.getProductDesc()) ? null :
+                    request.getProductDesc());
+        }
+        if (!ObjectUtils.isEmpty(request.getPrice())) {
+            product.setPrice(request.getPrice());
+        }
+        return product;
+    }
+
 }
