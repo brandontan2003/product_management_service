@@ -90,9 +90,9 @@ public class ProductControllerIntTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
+        log.info("Actual Response: " + writeValueAsString(actualResponse));
 
         String expectedResponse = Files.readString(expectedOutput);
-        log.info(writeValueAsString(actualResponse));
         JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
     }
 
@@ -108,12 +108,12 @@ public class ProductControllerIntTest {
         ResponsePayload<CreateProductResponse> responsePayload = new ObjectMapper()
                 .readValue(actualResponse, new TypeReference<>() {
                 });
-        String expectedOutput = Files.readString(basePath.resolve("create_product").resolve(
+        String expectedResponse = Files.readString(basePath.resolve("create_product").resolve(
                 "product_created_successfully.json"));
-        expectedOutput = expectedOutput.replace("#productId#", responsePayload.getResult().getProductId());
+        expectedResponse = expectedResponse.replace("#productId#", responsePayload.getResult().getProductId());
         log.info("Expected Response: " + writeValueAsString(actualResponse));
 
-        JSONAssert.assertEquals(expectedOutput, actualResponse, JSONCompareMode.LENIENT);
+        JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
     }
 
     @Test
@@ -128,11 +128,34 @@ public class ProductControllerIntTest {
                 .andReturn().getResponse().getContentAsString();
         log.info("Actual Response: " + writeValueAsString(actualResponse));
 
-        String expectedOutput = Files.readString(basePath.resolve("retrieve_product").resolve(
+        String expectedResponse = Files.readString(basePath.resolve("retrieve_product").resolve(
                 "product_retrieved_successfully.json"));
-        expectedOutput = expectedOutput.replace("#productId#", product.getProductId());
+        expectedResponse = expectedResponse.replace("#productId#", product.getProductId());
         log.info("Expected Response: " + writeValueAsString(actualResponse));
 
-        JSONAssert.assertEquals(expectedOutput, actualResponse, JSONCompareMode.LENIENT);
+        JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
+    }
+
+    static Stream<Arguments> test_retrieveProductDetails_Failure() {
+        Path retrieveProduct = basePath.resolve("retrieve_product");
+        return Stream.of(
+                Arguments.of("Product Not Found", "?productId=1234", retrieveProduct.resolve(
+                        "product_notFound_error.json")),
+                Arguments.of("Request Param productId is missing", "", retrieveProduct.resolve(
+                        "missing_requestParams_error.json"))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("test_retrieveProductDetails_Failure")
+    void retrieveProductDetails_Failure(String name, String requestParams, Path expectedOutput) throws Exception {
+        String actualResponse =
+                mvc.perform(get(API_PRODUCT + API_VERSION_1 + RETRIEVE_URL + DETAILS_URL + requestParams)
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andReturn().getResponse().getContentAsString();
+        log.info("Actual Response: " + writeValueAsString(actualResponse));
+
+        String expectedResponse = Files.readString(expectedOutput);
+        JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
     }
 }

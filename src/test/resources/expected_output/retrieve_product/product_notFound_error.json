@@ -1,0 +1,9 @@
+{
+  "status": "ERROR",
+  "result": {
+    "error": {
+      "errorCode": "PROD_NOT_FOUND",
+      "errorMessage": "Product not found"
+    }
+  }
+}

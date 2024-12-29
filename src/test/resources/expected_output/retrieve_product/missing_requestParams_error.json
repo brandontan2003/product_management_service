@@ -1,0 +1,9 @@
+{
+  "status": "ERROR",
+  "result": {
+    "error": {
+      "errorCode": "FIELD_VALIDATION_ERROR",
+      "errorMessage": "productId is required."
+    }
+  }
+}
