@@ -2,6 +2,7 @@ package com.example.product.service.service;
 
 import com.example.product.service.dto.CreateProductRequest;
 import com.example.product.service.dto.RetrieveProductDetailResponse;
+import com.example.product.service.dto.UpdateProductRequest;
 import com.example.product.service.exception.ProductErrorMessage;
 import com.example.product.service.exception.ProductException;
 import com.example.product.service.model.Product;
@@ -104,4 +105,42 @@ public class ProductServiceTest {
         assertEquals(request.getPrice(), capturedProduct.getPrice());
     }
 
+    private static UpdateProductRequest buildUpdateProductRequest() {
+        UpdateProductRequest request = new UpdateProductRequest();
+        request.setProductId(PRODUCT_ID);
+        request.setProductName(PRODUCT_NAME);
+        request.setProductDesc(PRODUCT_DESC);
+        request.setPrice(PRICE);
+        return request;
+    }
+
+    @Test
+    void updateProduct_Success() {
+        UpdateProductRequest request = buildUpdateProductRequest();
+        when(productRepository.saveAndFlush(any(Product.class))).thenReturn(getProduct());
+        when(productRepository.findByProductId(PRODUCT_ID)).thenReturn(Optional.of(getProduct()));
+
+        RetrieveProductDetailResponse actualResponse = productService.update(request);
+
+        assertNotNull(actualResponse);
+        ArgumentCaptor<Product> captor = ArgumentCaptor.forClass(Product.class);
+        verify(productRepository, times(1)).saveAndFlush(captor.capture());
+        assertEquals(request.getProductName(), actualResponse.getProductName());
+        assertEquals(request.getProductDesc(), actualResponse.getProductDesc());
+        assertEquals(request.getPrice(), actualResponse.getPrice());
+    }
+
+    @Test
+    void updateProduct_ProductNotFound_Failure() {
+        UpdateProductRequest request = buildUpdateProductRequest();
+        when(productRepository.findByProductId(PRODUCT_ID)).thenReturn(Optional.empty());
+
+        ProductException ex = assertThrows(ProductException.class, () -> productService
+                .update(request));
+
+        assertEquals(ex.getErrorMessage(), PRODUCT_NOT_FOUND);
+        assertEquals(ex.getErrorMessage().getHttpStatus(), PRODUCT_NOT_FOUND.getHttpStatus());
+        assertEquals(ex.getErrorMessage().getErrorCode(), PRODUCT_NOT_FOUND.getErrorCode());
+        assertEquals(ex.getErrorMessage().getErrorMessage(), PRODUCT_NOT_FOUND.getErrorMessage());
+    }
 }
