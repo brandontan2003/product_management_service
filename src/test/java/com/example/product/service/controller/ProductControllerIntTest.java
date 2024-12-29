@@ -115,7 +115,7 @@ public class ProductControllerIntTest {
                 .readValue(actualResponse, new TypeReference<>() {
                 });
         String expectedResponse = Files.readString(basePath.resolve("create_product").resolve(
-                "product_created_successfully.json"));
+                "product_created_success.json"));
         expectedResponse = expectedResponse.replace("#productId#", responsePayload.getResult().getProductId());
         log.info(EXPECTED_RESPONSE + writeValueAsString(actualResponse));
 
@@ -133,7 +133,7 @@ public class ProductControllerIntTest {
         log.info(ACTUAL_RESPONSE + writeValueAsString(actualResponse));
 
         String expectedResponse = Files.readString(basePath.resolve("retrieve_product").resolve(
-                "product_retrieved_successfully.json"));
+                "product_retrieved_success.json"));
         expectedResponse = expectedResponse.replace("#productId#", product.getProductId());
         log.info(EXPECTED_RESPONSE + writeValueAsString(actualResponse));
 
