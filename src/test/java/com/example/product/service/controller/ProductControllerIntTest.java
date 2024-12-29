@@ -51,7 +51,6 @@ public class ProductControllerIntTest {
     @Autowired
     private ProductRepository productRepository;
 
-    private static final String PRODUCT_ID = UUID.randomUUID().toString();
     private static final String PRODUCT_NAME = "Sample Product";
     private static final String PRODUCT_DESC = "Sample Product Description";
     private static final BigDecimal PRICE = BigDecimal.valueOf(99.99);
@@ -64,6 +63,14 @@ public class ProductControllerIntTest {
         request.setProductDesc(productDesc);
         request.setPrice(price);
         return request;
+    }
+
+    private Product saveProduct() {
+        Product product = new Product();
+        product.setProductName(PRODUCT_NAME);
+        product.setProductDesc(PRODUCT_DESC);
+        product.setPrice(PRICE);
+        return productRepository.saveAndFlush(product);
     }
 
     static Stream<Arguments> test_createProduct_Failure() {
@@ -117,9 +124,7 @@ public class ProductControllerIntTest {
 
     @Test
     void retrieveProductDetails_Success() throws Exception {
-        Product product = productRepository.saveAndFlush(productService.create(buildCreateProductRequest(PRODUCT_NAME,
-                PRODUCT_DESC, PRICE)));
-
+        Product product = saveProduct();
         String actualResponse = mvc.perform(get(API_PRODUCT + API_VERSION_1 + RETRIEVE_URL + DETAILS_URL
                         + "?productId=" + product.getProductId())
                         .contentType(MediaType.APPLICATION_JSON))
