@@ -3,6 +3,7 @@ package com.example.product.service.controller;
 import com.example.product.service.dto.CreateProductRequest;
 import com.example.product.service.dto.CreateProductResponse;
 import com.example.product.service.dto.ResponsePayload;
+import com.example.product.service.dto.UpdateProductRequest;
 import com.example.product.service.model.Product;
 import com.example.product.service.repository.ProductRepository;
 import com.example.product.service.service.ProductService;
@@ -30,8 +31,8 @@ import java.util.stream.Stream;
 
 import static com.example.product.service.TestUtils.*;
 import static com.example.product.service.constant.UriConstant.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static com.example.product.service.constant.UtilityConstant.NULL_IDENTIFIER;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
@@ -51,6 +52,7 @@ public class ProductControllerIntTest {
     @Autowired
     private ProductRepository productRepository;
 
+    private static final String PRODUCT_ID = UUID.randomUUID().toString();
     private static final String PRODUCT_NAME = "Sample Product";
     private static final String PRODUCT_DESC = "Sample Product Description";
     private static final BigDecimal PRICE = BigDecimal.valueOf(99.99);
@@ -59,6 +61,16 @@ public class ProductControllerIntTest {
     private static CreateProductRequest buildCreateProductRequest(String productName, String productDesc,
                                                                   BigDecimal price) {
         CreateProductRequest request = new CreateProductRequest();
+        request.setProductName(productName);
+        request.setProductDesc(productDesc);
+        request.setPrice(price);
+        return request;
+    }
+
+    private static UpdateProductRequest buildUpdateProductRequest(String productId, String productName,
+                                                                  String productDesc, BigDecimal price) {
+        UpdateProductRequest request = new UpdateProductRequest();
+        request.setProductId(productId);
         request.setProductName(productName);
         request.setProductDesc(productDesc);
         request.setPrice(price);
@@ -160,6 +172,65 @@ public class ProductControllerIntTest {
         log.info(ACTUAL_RESPONSE + writeValueAsString(actualResponse));
 
         String expectedResponse = Files.readString(expectedOutput);
+        JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
+    }
+
+    static Stream<Arguments> test_updateProduct_Failure() {
+        Path updateProduct = basePath.resolve("update_product");
+        return Stream.of(
+                Arguments.of("Product not found", buildUpdateProductRequest(PRODUCT_ID, PRODUCT_NAME, PRODUCT_DESC,
+                        PRICE), updateProduct.resolve("product_notFound_error.json")),
+                Arguments.of("Product Id is missing", buildUpdateProductRequest(null, PRODUCT_NAME, PRODUCT_DESC,
+                        PRICE), updateProduct.resolve("missing_productId_error.json")),
+                Arguments.of("Product Id and Price is invalid", buildUpdateProductRequest("1234", PRODUCT_NAME,
+                        PRODUCT_DESC, BigDecimal.valueOf(-1.0)), updateProduct.resolve("invalid_productId_price_error" +
+                        ".json"))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("test_updateProduct_Failure")
+    void updateProduct_Failure(String name, UpdateProductRequest request, Path expectedOutput) throws Exception {
+        String actualResponse =
+                mvc.perform(put(API_PRODUCT + API_VERSION_1 + UPDATE_URL)
+                                .content(writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andReturn().getResponse().getContentAsString();
+        log.info(ACTUAL_RESPONSE + writeValueAsString(actualResponse));
+
+        String expectedResponse = Files.readString(expectedOutput);
+        JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
+    }
+
+    static Stream<Arguments> test_updateProduct_Success() {
+        Path updateProduct = basePath.resolve("update_product");
+        return Stream.of(
+                Arguments.of("Product updated successfully", buildUpdateProductRequest(PRODUCT_ID, PRODUCT_NAME,
+                        PRODUCT_DESC, PRICE), updateProduct.resolve("product_updated_success.json")),
+                Arguments.of("Update product set fields to null successfully", buildUpdateProductRequest(PRODUCT_ID,
+                        NULL_IDENTIFIER, NULL_IDENTIFIER, BigDecimal.valueOf(0)), updateProduct.resolve(
+                                "product_nullFields_success.json"))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("test_updateProduct_Success")
+    void updateProduct_Success(String name, UpdateProductRequest request, Path expectedOutput) throws Exception {
+        Product product = saveProduct();
+        String savedProductId = product.getProductId();
+        request.setProductId(savedProductId);
+
+        String actualResponse =
+                mvc.perform(put(API_PRODUCT + API_VERSION_1 + UPDATE_URL)
+                                .content(writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andReturn().getResponse().getContentAsString();
+        log.info(ACTUAL_RESPONSE + writeValueAsString(actualResponse));
+
+        String expectedResponse = Files.readString(expectedOutput);
+        expectedResponse = expectedResponse.replace("#productId#", savedProductId);
+        log.info(EXPECTED_RESPONSE + writeValueAsString(expectedResponse));
+
         JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
     }
 }
