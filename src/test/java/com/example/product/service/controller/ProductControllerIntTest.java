@@ -28,7 +28,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import static com.example.product.service.TestUtils.writeValueAsString;
+import static com.example.product.service.TestUtils.*;
 import static com.example.product.service.constant.UriConstant.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -55,7 +55,6 @@ public class ProductControllerIntTest {
     private static final String PRODUCT_NAME = "Sample Product";
     private static final String PRODUCT_DESC = "Sample Product Description";
     private static final BigDecimal PRICE = BigDecimal.valueOf(99.99);
-
     private static final Path basePath = Paths.get("src", "test", "resources", "expected_output");
 
     private static CreateProductRequest buildCreateProductRequest(String productName, String productDesc,
@@ -90,7 +89,7 @@ public class ProductControllerIntTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
-        log.info("Actual Response: " + writeValueAsString(actualResponse));
+        log.info(ACTUAL_RESPONSE + writeValueAsString(actualResponse));
 
         String expectedResponse = Files.readString(expectedOutput);
         JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
@@ -103,7 +102,7 @@ public class ProductControllerIntTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
-        log.info("Actual Response: " + writeValueAsString(actualResponse));
+        log.info(ACTUAL_RESPONSE + writeValueAsString(actualResponse));
 
         ResponsePayload<CreateProductResponse> responsePayload = new ObjectMapper()
                 .readValue(actualResponse, new TypeReference<>() {
@@ -111,7 +110,7 @@ public class ProductControllerIntTest {
         String expectedResponse = Files.readString(basePath.resolve("create_product").resolve(
                 "product_created_successfully.json"));
         expectedResponse = expectedResponse.replace("#productId#", responsePayload.getResult().getProductId());
-        log.info("Expected Response: " + writeValueAsString(actualResponse));
+        log.info(EXPECTED_RESPONSE + writeValueAsString(actualResponse));
 
         JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
     }
@@ -126,12 +125,12 @@ public class ProductControllerIntTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn().getResponse().getContentAsString();
-        log.info("Actual Response: " + writeValueAsString(actualResponse));
+        log.info(ACTUAL_RESPONSE + writeValueAsString(actualResponse));
 
         String expectedResponse = Files.readString(basePath.resolve("retrieve_product").resolve(
                 "product_retrieved_successfully.json"));
         expectedResponse = expectedResponse.replace("#productId#", product.getProductId());
-        log.info("Expected Response: " + writeValueAsString(actualResponse));
+        log.info(EXPECTED_RESPONSE + writeValueAsString(actualResponse));
 
         JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
     }
@@ -153,7 +152,7 @@ public class ProductControllerIntTest {
                 mvc.perform(get(API_PRODUCT + API_VERSION_1 + RETRIEVE_URL + DETAILS_URL + requestParams)
                                 .contentType(MediaType.APPLICATION_JSON))
                         .andReturn().getResponse().getContentAsString();
-        log.info("Actual Response: " + writeValueAsString(actualResponse));
+        log.info(ACTUAL_RESPONSE + writeValueAsString(actualResponse));
 
         String expectedResponse = Files.readString(expectedOutput);
         JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
