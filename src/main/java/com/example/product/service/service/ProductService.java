@@ -49,8 +49,7 @@ public class ProductService {
 
     private Product updateCopyProperties(UpdateProductRequest request, Product product) {
         if (!ObjectUtils.isEmpty(request.getProductName())) {
-            product.setProductName(NULL_IDENTIFIER.equalsIgnoreCase(request.getProductName()) ? null :
-                    request.getProductName());
+            product.setProductName(request.getProductName());
         }
         if (!ObjectUtils.isEmpty(request.getProductDesc())) {
             product.setProductDesc(NULL_IDENTIFIER.equalsIgnoreCase(request.getProductDesc()) ? null :

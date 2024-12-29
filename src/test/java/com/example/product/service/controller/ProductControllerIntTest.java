@@ -208,7 +208,7 @@ public class ProductControllerIntTest {
                 Arguments.of("Product updated successfully", buildUpdateProductRequest(PRODUCT_ID, PRODUCT_NAME,
                         PRODUCT_DESC, PRICE), updateProduct.resolve("product_updated_success.json")),
                 Arguments.of("Update product set fields to null successfully", buildUpdateProductRequest(PRODUCT_ID,
-                        NULL_IDENTIFIER, NULL_IDENTIFIER, BigDecimal.valueOf(0)), updateProduct.resolve(
+                        PRODUCT_NAME, NULL_IDENTIFIER, BigDecimal.valueOf(0)), updateProduct.resolve(
                                 "product_nullFields_success.json"))
         );
     }

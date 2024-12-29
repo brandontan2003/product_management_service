@@ -16,11 +16,11 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = PRODUCT_ID, length = FieldLength.PRODUCT_ID)
     private String productId;
-    @Column(name = PRODUCT_NAME, length = FieldLength.PRODUCT_NAME)
+    @Column(name = PRODUCT_NAME, length = FieldLength.PRODUCT_NAME, nullable = false)
     private String productName;
     @Column(name = PRODUCT_DESC, length = FieldLength.PRODUCT_DESC)
     private String productDesc;
-    @Column(name = PRICE)
+    @Column(name = PRICE, nullable = false)
     private BigDecimal price;
 
 }
