@@ -1,9 +1,9 @@
 package com.example.product.service.service;
 
 import com.example.product.service.dto.CreateProductRequest;
+import com.example.product.service.dto.DeleteProductRequest;
 import com.example.product.service.dto.RetrieveProductDetailResponse;
 import com.example.product.service.dto.UpdateProductRequest;
-import com.example.product.service.exception.ProductErrorMessage;
 import com.example.product.service.exception.ProductException;
 import com.example.product.service.model.Product;
 import com.example.product.service.repository.ProductRepository;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import static com.example.product.service.constant.UtilityConstant.NULL_IDENTIFIER;
+import static com.example.product.service.exception.ProductErrorMessage.PRODUCT_NOT_FOUND;
 
 @Service
 public class ProductService {
@@ -33,7 +34,7 @@ public class ProductService {
 
     public RetrieveProductDetailResponse retrieveProductDetails(String productId) {
         Product product = productRepository.findByProductId(productId)
-                .orElseThrow(() -> new ProductException(ProductErrorMessage.PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
         return mapper.map(product, RetrieveProductDetailResponse.class);
     }
 
@@ -41,7 +42,7 @@ public class ProductService {
     public RetrieveProductDetailResponse update(UpdateProductRequest request) {
         String productId = request.getProductId();
         Product product = productRepository.findByProductId(productId).orElseThrow(() ->
-                new ProductException(ProductErrorMessage.PRODUCT_NOT_FOUND));
+                new ProductException(PRODUCT_NOT_FOUND));
 
         productRepository.saveAndFlush(updateCopyProperties(request, product));
         return retrieveProductDetails(productId);
@@ -61,4 +62,10 @@ public class ProductService {
         return product;
     }
 
+    @Transactional
+    public void delete(DeleteProductRequest request) {
+        String productId = request.getProductId();
+        productRepository.findByProductId(productId).orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+        productRepository.deleteById(productId);
+    }
 }

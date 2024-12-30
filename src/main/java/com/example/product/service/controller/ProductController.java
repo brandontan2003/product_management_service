@@ -38,4 +38,10 @@ public class ProductController {
         return ResponsePayload.<RetrieveProductDetailResponse>builder().status(STATUS_SUCCESS)
                 .result(productService.update(updateProductRequest)).build();
     }
+
+    @DeleteMapping(API_VERSION_1 + DELETE_URL)
+    public ResponsePayload<String> deleteProduct(@Valid @RequestBody DeleteProductRequest deleteProductRequest) {
+        productService.delete(deleteProductRequest);
+        return ResponsePayload.<String>builder().status(STATUS_SUCCESS).build();
+    }
 }
