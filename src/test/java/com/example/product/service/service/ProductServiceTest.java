@@ -1,6 +1,7 @@
 package com.example.product.service.service;
 
 import com.example.product.service.dto.CreateProductRequest;
+import com.example.product.service.dto.DeleteProductRequest;
 import com.example.product.service.dto.RetrieveProductDetailResponse;
 import com.example.product.service.dto.UpdateProductRequest;
 import com.example.product.service.exception.ProductErrorMessage;
@@ -135,8 +136,28 @@ public class ProductServiceTest {
         UpdateProductRequest request = buildUpdateProductRequest();
         when(productRepository.findByProductId(PRODUCT_ID)).thenReturn(Optional.empty());
 
-        ProductException ex = assertThrows(ProductException.class, () -> productService
-                .update(request));
+        ProductException ex = assertThrows(ProductException.class, () -> productService.update(request));
+
+        assertEquals(ex.getErrorMessage(), PRODUCT_NOT_FOUND);
+        assertEquals(ex.getErrorMessage().getHttpStatus(), PRODUCT_NOT_FOUND.getHttpStatus());
+        assertEquals(ex.getErrorMessage().getErrorCode(), PRODUCT_NOT_FOUND.getErrorCode());
+        assertEquals(ex.getErrorMessage().getErrorMessage(), PRODUCT_NOT_FOUND.getErrorMessage());
+    }
+
+    @Test
+    void deleteProduct_Success() {
+        DeleteProductRequest request = new DeleteProductRequest(PRODUCT_ID);
+        when(productRepository.findByProductId(PRODUCT_ID)).thenReturn(Optional.of(getProduct()));
+        productService.delete(request);
+        verify(productRepository, times(1)).deleteById(PRODUCT_ID);
+    }
+
+    @Test
+    void deleteProduct_ProductNotFound_Failure() {
+        DeleteProductRequest request = new DeleteProductRequest(PRODUCT_ID);
+        when(productRepository.findByProductId(PRODUCT_ID)).thenReturn(Optional.empty());
+
+        ProductException ex = assertThrows(ProductException.class, () -> productService.delete(request));
 
         assertEquals(ex.getErrorMessage(), PRODUCT_NOT_FOUND);
         assertEquals(ex.getErrorMessage().getHttpStatus(), PRODUCT_NOT_FOUND.getHttpStatus());
