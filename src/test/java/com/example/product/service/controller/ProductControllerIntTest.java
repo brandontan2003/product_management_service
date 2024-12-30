@@ -1,9 +1,6 @@
 package com.example.product.service.controller;
 
-import com.example.product.service.dto.CreateProductRequest;
-import com.example.product.service.dto.CreateProductResponse;
-import com.example.product.service.dto.ResponsePayload;
-import com.example.product.service.dto.UpdateProductRequest;
+import com.example.product.service.dto.*;
 import com.example.product.service.model.Product;
 import com.example.product.service.repository.ProductRepository;
 import com.example.product.service.service.ProductService;
@@ -230,6 +227,50 @@ public class ProductControllerIntTest {
         String expectedResponse = Files.readString(expectedOutput);
         expectedResponse = expectedResponse.replace("#productId#", savedProductId);
         log.info(EXPECTED_RESPONSE + writeValueAsString(expectedResponse));
+
+        JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
+    }
+
+    static Stream<Arguments> test_deleteProduct_Failure() {
+        Path deleteProduct = basePath.resolve("delete_product");
+        return Stream.of(
+                Arguments.of("Product not found", new DeleteProductRequest(PRODUCT_ID), deleteProduct.resolve(
+                        "product_notFound_error.json")),
+                Arguments.of("Product Id is missing", new DeleteProductRequest(), deleteProduct.resolve(
+                        "missing_productId_error.json")),
+                Arguments.of("Product Id is invalid", new DeleteProductRequest("1234"), deleteProduct
+                        .resolve("invalid_productId_error.json"))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("test_deleteProduct_Failure")
+    void deleteProduct_Failure(String name, DeleteProductRequest request, Path expectedOutput) throws Exception {
+        String actualResponse =
+                mvc.perform(delete(API_PRODUCT + API_VERSION_1 + DELETE_URL)
+                                .content(writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andReturn().getResponse().getContentAsString();
+        log.info(ACTUAL_RESPONSE + writeValueAsString(actualResponse));
+
+        String expectedResponse = Files.readString(expectedOutput);
+        JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
+    }
+
+    @Test
+    void deleteProduct_Success() throws Exception {
+        Product product = saveProduct();
+        DeleteProductRequest request = new DeleteProductRequest(product.getProductId());
+
+        String actualResponse =
+                mvc.perform(delete(API_PRODUCT + API_VERSION_1 + DELETE_URL)
+                                .content(writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andReturn().getResponse().getContentAsString();
+        log.info(ACTUAL_RESPONSE + writeValueAsString(actualResponse));
+
+        Path expectedOutput = basePath.resolve("delete_product").resolve("product_deleted_success.json");
+        String expectedResponse = Files.readString(expectedOutput);
 
         JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
     }
