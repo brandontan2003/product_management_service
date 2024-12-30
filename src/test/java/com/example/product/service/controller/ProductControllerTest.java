@@ -16,7 +16,7 @@ import java.util.UUID;
 import static com.example.product.service.constant.ApiConstant.STATUS_SUCCESS;
 import static com.example.product.service.exception.ProductErrorMessage.PRODUCT_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ProductControllerTest {
@@ -126,6 +126,30 @@ public class ProductControllerTest {
         UpdateProductRequest request = buildUpdateProductRequest();
         when(productService.update(request)).thenThrow(new ProductException(PRODUCT_NOT_FOUND));
         ProductException ex = assertThrows(ProductException.class, () -> productController.updateProduct(request));
+
+        assertEquals(ex.getErrorMessage(), PRODUCT_NOT_FOUND);
+        assertEquals(ex.getErrorMessage().getHttpStatus(), PRODUCT_NOT_FOUND.getHttpStatus());
+        assertEquals(ex.getErrorMessage().getErrorCode(), PRODUCT_NOT_FOUND.getErrorCode());
+        assertEquals(ex.getErrorMessage().getErrorMessage(), PRODUCT_NOT_FOUND.getErrorMessage());
+    }
+
+    @Test
+    void deleteProduct_Success() {
+        DeleteProductRequest request = new DeleteProductRequest(PRODUCT_ID);
+        doNothing().when(productService).delete(request);
+
+        ResponsePayload<String> actualResponse = productController.deleteProduct(request);
+
+        assertNotNull(actualResponse);
+        assertEquals(STATUS_SUCCESS, actualResponse.getStatus());
+        assertNull(actualResponse.getResult());
+    }
+
+    @Test
+    void deleteProduct_productNotFound_Error() {
+        DeleteProductRequest request = new DeleteProductRequest(PRODUCT_ID);
+        doThrow(new ProductException(PRODUCT_NOT_FOUND)).when(productService).delete(request);
+        ProductException ex = assertThrows(ProductException.class, () -> productController.deleteProduct(request));
 
         assertEquals(ex.getErrorMessage(), PRODUCT_NOT_FOUND);
         assertEquals(ex.getErrorMessage().getHttpStatus(), PRODUCT_NOT_FOUND.getHttpStatus());
