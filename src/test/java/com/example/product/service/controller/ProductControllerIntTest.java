@@ -67,11 +67,11 @@ public class ProductControllerIntTest {
         return request;
     }
 
-    private static UpdateProductRequest buildUpdateProductRequest(String productId, String productName,
-                                                                  String productDesc, BigDecimal price) {
+    private static UpdateProductRequest buildUpdateProductRequest(String productId, String productDesc,
+                                                                  BigDecimal price) {
         UpdateProductRequest request = new UpdateProductRequest();
         request.setProductId(productId);
-        request.setProductName(productName);
+        request.setProductName(ProductControllerIntTest.PRODUCT_NAME);
         request.setProductDesc(productDesc);
         request.setPrice(price);
         return request;
@@ -178,13 +178,13 @@ public class ProductControllerIntTest {
     static Stream<Arguments> test_updateProduct_Failure() {
         Path updateProduct = basePath.resolve("update_product");
         return Stream.of(
-                Arguments.of("Product not found", buildUpdateProductRequest(PRODUCT_ID, PRODUCT_NAME, PRODUCT_DESC,
+                Arguments.of("Product not found", buildUpdateProductRequest(PRODUCT_ID, PRODUCT_DESC,
                         PRICE), updateProduct.resolve("product_notFound_error.json")),
-                Arguments.of("Product Id is missing", buildUpdateProductRequest(null, PRODUCT_NAME, PRODUCT_DESC,
+                Arguments.of("Product Id is missing", buildUpdateProductRequest(null, PRODUCT_DESC,
                         PRICE), updateProduct.resolve("missing_productId_error.json")),
-                Arguments.of("Product Id and Price is invalid", buildUpdateProductRequest("1234", PRODUCT_NAME,
-                        PRODUCT_DESC, BigDecimal.valueOf(-1.0)), updateProduct.resolve("invalid_productId_price_error" +
-                        ".json"))
+                Arguments.of("Product Id and Price is invalid", buildUpdateProductRequest("1234",
+                        PRODUCT_DESC, BigDecimal.valueOf(-1.0)), updateProduct.resolve(
+                        "invalid_productId_price_error.json"))
         );
     }
 
@@ -205,11 +205,11 @@ public class ProductControllerIntTest {
     static Stream<Arguments> test_updateProduct_Success() {
         Path updateProduct = basePath.resolve("update_product");
         return Stream.of(
-                Arguments.of("Product updated successfully", buildUpdateProductRequest(PRODUCT_ID, PRODUCT_NAME,
+                Arguments.of("Product updated successfully", buildUpdateProductRequest(PRODUCT_ID,
                         PRODUCT_DESC, PRICE), updateProduct.resolve("product_updated_success.json")),
                 Arguments.of("Update product set fields to null successfully", buildUpdateProductRequest(PRODUCT_ID,
-                        PRODUCT_NAME, NULL_IDENTIFIER, BigDecimal.valueOf(0)), updateProduct.resolve(
-                                "product_nullFields_success.json"))
+                        NULL_IDENTIFIER, BigDecimal.valueOf(0)), updateProduct.resolve(
+                        "product_nullFields_success.json"))
         );
     }
 
