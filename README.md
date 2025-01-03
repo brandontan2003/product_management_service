@@ -6,8 +6,8 @@ This is a simple CRUD application that uses the REST APIs for Product. It uses t
 ## Features
 - [Add a new product.](#add-a-product)
 - [Retrieve details of a product.](#retrieve-a-product)
-- [Update details of an existing book.](#update-a-book)
-- [Delete an existing product](#delete-book)
+- [Update details of an existing book.](#update-a-product)
+- [Delete an existing product](#delete-product)
 
 ## Technologies Used
 - **Spring Boot**: A Java-based framework used for building production-ready, stand-alone, and microservice-oriented web applications.
@@ -136,7 +136,7 @@ This is a simple CRUD application that uses the REST APIs for Product. It uses t
 }
 ```
 
-### Update a Book
+### Update a Product
 **PUT** `/api/product/v1/update`
 
 #### Request Body
@@ -199,7 +199,7 @@ This is a simple CRUD application that uses the REST APIs for Product. It uses t
 }
 ```
 
-### Delete Book
+### Delete Product
 **GET** `/api/product/v1/delete`
 
 #### Request Body
