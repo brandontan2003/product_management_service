@@ -47,10 +47,11 @@ public class ProductControllerTest {
         assertEquals(result.getProductName(), mockProduct.getProductName());
         assertEquals(result.getProductDesc(), mockProduct.getProductDesc());
         assertEquals(result.getPrice(), mockProduct.getPrice());
+        assertEquals(result.getScheduledDeletionDate(), mockProduct.getScheduledDeletionDate());
     }
 
     private static RetrieveProductDetailResponse getMockProduct() {
-        return new RetrieveProductDetailResponse(PRODUCT_ID, PRODUCT_NAME, PRODUCT_DESC, PRICE);
+        return new RetrieveProductDetailResponse(PRODUCT_ID, PRODUCT_NAME, PRODUCT_DESC, PRICE, null);
     }
 
     @Test
@@ -119,6 +120,7 @@ public class ProductControllerTest {
         assertEquals(PRODUCT_NAME, result.getProductName());
         assertEquals(PRODUCT_DESC, result.getProductDesc());
         assertEquals(PRICE, result.getPrice());
+        assertNull(result.getScheduledDeletionDate());
     }
 
     @Test

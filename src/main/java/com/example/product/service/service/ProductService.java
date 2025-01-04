@@ -59,6 +59,9 @@ public class ProductService {
         if (!ObjectUtils.isEmpty(request.getPrice())) {
             product.setPrice(request.getPrice());
         }
+        if (!ObjectUtils.isEmpty(request.getScheduledDeletionDate())) {
+            product.setScheduledDeletionDate(request.getScheduledDeletionDate());
+        }
         return product;
     }
 

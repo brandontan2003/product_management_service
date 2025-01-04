@@ -103,6 +103,7 @@ public class ProductServiceTest {
         assertEquals(request.getProductName(), capturedProduct.getProductName());
         assertEquals(request.getProductDesc(), capturedProduct.getProductDesc());
         assertEquals(request.getPrice(), capturedProduct.getPrice());
+        assertNull(capturedProduct.getScheduledDeletionDate());
     }
 
     private static UpdateProductRequest buildUpdateProductRequest() {

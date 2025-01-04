@@ -18,11 +18,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -53,6 +55,7 @@ public class ProductControllerIntTest {
     private static final String PRODUCT_NAME = "Sample Product";
     private static final String PRODUCT_DESC = "Sample Product Description";
     private static final BigDecimal PRICE = BigDecimal.valueOf(99.99);
+    private static final LocalDate FUTURE_DATE = LocalDate.now().plusDays(1);
     private static final Path basePath = Paths.get("src", "test", "resources", "expected_output");
 
     private static CreateProductRequest buildCreateProductRequest(String productName, String productDesc,
@@ -65,20 +68,22 @@ public class ProductControllerIntTest {
     }
 
     private static UpdateProductRequest buildUpdateProductRequest(String productId, String productDesc,
-                                                                  BigDecimal price) {
+                                                                  BigDecimal price, LocalDate scheduledDeletionDate) {
         UpdateProductRequest request = new UpdateProductRequest();
         request.setProductId(productId);
-        request.setProductName(ProductControllerIntTest.PRODUCT_NAME);
+        request.setProductName(PRODUCT_NAME);
         request.setProductDesc(productDesc);
         request.setPrice(price);
+        request.setScheduledDeletionDate(scheduledDeletionDate);
         return request;
     }
 
-    private Product saveProduct() {
+    private Product saveProduct(LocalDate scheduledDeletionDate) {
         Product product = new Product();
         product.setProductName(PRODUCT_NAME);
         product.setProductDesc(PRODUCT_DESC);
         product.setPrice(PRICE);
+        product.setScheduledDeletionDate(scheduledDeletionDate);
         return productRepository.saveAndFlush(product);
     }
 
@@ -131,9 +136,21 @@ public class ProductControllerIntTest {
         JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
     }
 
-    @Test
-    void retrieveProductDetails_Success() throws Exception {
-        Product product = saveProduct();
+    static Stream<Arguments> test_retrieveProductDetails_Success() {
+        Path retrieveProduct = basePath.resolve("retrieve_product");
+        return Stream.of(
+                Arguments.of("Retrieve product successfully where deletionDate is null ", null,
+                        retrieveProduct.resolve("product_retrieved_success.json")),
+                Arguments.of("Retrieve product successfully where deletionDate is not null",
+                        LocalDate.now().plusDays(1), retrieveProduct
+                                .resolve("product_deletionDate_retrieved_success.json"))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("test_retrieveProductDetails_Success")
+    void retrieveProductDetails_Success(String name, LocalDate scheduledDeletionDate, Path outputFile) throws Exception {
+        Product product = saveProduct(scheduledDeletionDate);
         String actualResponse = mvc.perform(get(API_PRODUCT + API_VERSION_1 + RETRIEVE_URL + DETAILS_URL
                         + "?productId=" + product.getProductId())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -141,9 +158,12 @@ public class ProductControllerIntTest {
                 .andReturn().getResponse().getContentAsString();
         log.info(ACTUAL_RESPONSE + writeValueAsString(actualResponse));
 
-        String expectedResponse = Files.readString(basePath.resolve("retrieve_product").resolve(
-                "product_retrieved_success.json"));
+        String expectedResponse = Files.readString(outputFile);
         expectedResponse = expectedResponse.replace("#productId#", product.getProductId());
+        if (!ObjectUtils.isEmpty(product.getScheduledDeletionDate())) {
+            expectedResponse = expectedResponse.replace("#scheduledDeletionDate#",
+                    product.getScheduledDeletionDate().toString());
+        }
         log.info(EXPECTED_RESPONSE + writeValueAsString(actualResponse));
 
         JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
@@ -176,12 +196,15 @@ public class ProductControllerIntTest {
         Path updateProduct = basePath.resolve("update_product");
         return Stream.of(
                 Arguments.of("Product not found", buildUpdateProductRequest(PRODUCT_ID, PRODUCT_DESC,
-                        PRICE), updateProduct.resolve("product_notFound_error.json")),
+                        PRICE, FUTURE_DATE), updateProduct.resolve("product_notFound_error.json")),
                 Arguments.of("Product Id is missing", buildUpdateProductRequest(null, PRODUCT_DESC,
-                        PRICE), updateProduct.resolve("missing_productId_error.json")),
+                        PRICE, FUTURE_DATE), updateProduct.resolve("missing_productId_error.json")),
                 Arguments.of("Product Id and Price is invalid", buildUpdateProductRequest("1234",
-                        PRODUCT_DESC, BigDecimal.valueOf(-1.0)), updateProduct.resolve(
-                        "invalid_productId_price_error.json"))
+                        PRODUCT_DESC, BigDecimal.valueOf(-1.0), FUTURE_DATE), updateProduct.resolve(
+                        "invalid_productId_price_error.json")),
+                Arguments.of("scheduledDeletionDate is a past date", buildUpdateProductRequest(PRODUCT_ID,
+                        PRODUCT_DESC, PRICE, LocalDate.now().minusDays(1)), updateProduct.resolve(
+                        "invalid_scheduledDeletionDate_error.json"))
         );
     }
 
@@ -203,9 +226,9 @@ public class ProductControllerIntTest {
         Path updateProduct = basePath.resolve("update_product");
         return Stream.of(
                 Arguments.of("Product updated successfully", buildUpdateProductRequest(PRODUCT_ID,
-                        PRODUCT_DESC, PRICE), updateProduct.resolve("product_updated_success.json")),
+                        PRODUCT_DESC, PRICE, FUTURE_DATE), updateProduct.resolve("product_updated_success.json")),
                 Arguments.of("Update product set fields to null successfully", buildUpdateProductRequest(PRODUCT_ID,
-                        NULL_IDENTIFIER, BigDecimal.valueOf(0)), updateProduct.resolve(
+                        NULL_IDENTIFIER, BigDecimal.valueOf(0), FUTURE_DATE), updateProduct.resolve(
                         "product_nullFields_success.json"))
         );
     }
@@ -213,7 +236,7 @@ public class ProductControllerIntTest {
     @ParameterizedTest
     @MethodSource("test_updateProduct_Success")
     void updateProduct_Success(String name, UpdateProductRequest request, Path expectedOutput) throws Exception {
-        Product product = saveProduct();
+        Product product = saveProduct(null);
         String savedProductId = product.getProductId();
         request.setProductId(savedProductId);
 
@@ -259,7 +282,7 @@ public class ProductControllerIntTest {
 
     @Test
     void deleteProduct_Success() throws Exception {
-        Product product = saveProduct();
+        Product product = saveProduct(null);
         DeleteProductRequest request = new DeleteProductRequest(product.getProductId());
 
         String actualResponse =

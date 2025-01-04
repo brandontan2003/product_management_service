@@ -5,6 +5,6 @@
     "productName": "Sample Product",
     "productDesc": "Sample Product Description",
     "price": 99.99,
-    "scheduledDeletionDate": null
+    "scheduledDeletionDate": "#scheduledDeletionDate#"
   }
 }
