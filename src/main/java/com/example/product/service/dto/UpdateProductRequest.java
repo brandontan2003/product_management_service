@@ -1,7 +1,10 @@
 package com.example.product.service.dto;
 
 import com.example.product.service.constant.ProductModelConstant;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +12,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.UUID;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static com.example.product.service.constant.ErrorConstant.*;
 
@@ -27,4 +31,6 @@ public class UpdateProductRequest {
     private String productDesc;
     @PositiveOrZero(message = PRICE_NEGATIVE_ERROR)
     private BigDecimal price;
+    @Future(message = SCHEDULED_DATE_NOT_FUTURE_ERROR)
+    private LocalDate scheduledDeletionDate;
 }

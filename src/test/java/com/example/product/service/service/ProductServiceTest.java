@@ -4,7 +4,6 @@ import com.example.product.service.dto.CreateProductRequest;
 import com.example.product.service.dto.DeleteProductRequest;
 import com.example.product.service.dto.RetrieveProductDetailResponse;
 import com.example.product.service.dto.UpdateProductRequest;
-import com.example.product.service.exception.ProductErrorMessage;
 import com.example.product.service.exception.ProductException;
 import com.example.product.service.model.Product;
 import com.example.product.service.repository.ProductRepository;
@@ -104,6 +103,7 @@ public class ProductServiceTest {
         assertEquals(request.getProductName(), capturedProduct.getProductName());
         assertEquals(request.getProductDesc(), capturedProduct.getProductDesc());
         assertEquals(request.getPrice(), capturedProduct.getPrice());
+        assertNull(capturedProduct.getScheduledDeletionDate());
     }
 
     private static UpdateProductRequest buildUpdateProductRequest() {

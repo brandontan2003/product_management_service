@@ -117,7 +117,8 @@ This is a simple CRUD application that uses the REST APIs for Product. It uses t
       "productId": "be5d7880-e335-4126-8424-d65cde759f21",
       "productName": "Sample Product",
       "productDesc": "Sample Product Description",
-      "price": 99.99
+      "price": 99.99,
+      "scheduledDeletionDate": null
    }
 }
 
@@ -162,7 +163,8 @@ This is a simple CRUD application that uses the REST APIs for Product. It uses t
       "productId": "53c7f6e9-0ef7-47a0-8508-b8f01472b150",
       "productName": "The Lord of the Rings",
       "productDesc": null,
-      "price": 12.00
+      "price": 12.00,
+      "scheduledDeletionDate": null
    }
 }
 ```
