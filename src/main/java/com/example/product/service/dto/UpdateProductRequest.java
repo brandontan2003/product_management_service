@@ -1,7 +1,9 @@
 package com.example.product.service.dto;
 
 import com.example.product.service.constant.ProductModelConstant;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

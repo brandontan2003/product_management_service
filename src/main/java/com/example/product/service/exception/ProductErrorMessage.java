@@ -1,7 +1,6 @@
 package com.example.product.service.exception;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 import static com.example.product.service.constant.ErrorConstant.*;
