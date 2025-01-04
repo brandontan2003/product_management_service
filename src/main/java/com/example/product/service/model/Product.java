@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static com.example.product.service.constant.ProductModelConstant.*;
 
@@ -22,5 +23,6 @@ public class Product {
     private String productDesc;
     @Column(name = PRICE, nullable = false)
     private BigDecimal price;
-
+    @Column(name = SCHEDULED_DELETION_DATE)
+    private LocalDate scheduledDeletionDate;
 }
