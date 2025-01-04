@@ -17,12 +17,13 @@ This is a simple CRUD application that uses the REST APIs for Product. It uses t
 ## Database Schema
 
 ### Table: `product_table`
-| Column         | Type           | Constraints |
-|----------------|----------------|-------------|
-| `product_id`   | VARCHAR(36)    | PRIMARY KEY |
-| `product_name` | VARCHAR(100)   | NOT NULL    |
-| `product_desc` | VARCHAR(350)   |             |
-| `price`        | DECIMAL(10, 2) | NOT NULL    |
+| Column                    | Type           | Constraints |
+|---------------------------|----------------|-------------|
+| `product_id`              | VARCHAR(36)    | PRIMARY KEY |
+| `product_name`            | VARCHAR(100)   | NOT NULL    |
+| `product_desc`            | VARCHAR(350)   |             |
+| `price`                   | DECIMAL(10, 2) | NOT NULL    |
+| `scheduled_deletion_date` | DATE           |             |
 
 ## Setup Instructions
 1. Download Java 17 and verify Gradle installation
