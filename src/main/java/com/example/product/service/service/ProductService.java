@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import static com.example.product.service.constant.UtilityConstant.NULL_IDENTIFIER;
 import static com.example.product.service.exception.ProductErrorMessage.PRODUCT_NOT_FOUND;
+import static com.example.product_common_core.constant.UtilityConstant.NULL_IDENTIFIER;
 
 @Service
 public class ProductService {

@@ -22,13 +22,17 @@ configurations {
 repositories {
 	mavenCentral()
 	maven { url 'https://repo.spring.io/snapshot' }
+	mavenLocal()
 }
 
 ext {
+	PRODUCT_COMMON_CORE = '1.0.0'
 	LOMBOK_VERSION = '1.18.22'
 }
 
 dependencies {
+	implementation "com.example:product_common_core:${PRODUCT_COMMON_CORE}"
+
 	implementation 'org.modelmapper:modelmapper:3.1.0'
 	// https://mvnrepository.com/artifact/commons-io/commons-io
 	implementation 'commons-io:commons-io:2.18.0'

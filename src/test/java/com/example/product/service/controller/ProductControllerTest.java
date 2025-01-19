@@ -4,6 +4,7 @@ import com.example.product.service.dto.*;
 import com.example.product.service.exception.ProductException;
 import com.example.product.service.model.Product;
 import com.example.product.service.service.ProductService;
+import com.example.product_common_core.dto.ResponsePayload;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,8 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import static com.example.product.service.constant.ApiConstant.STATUS_SUCCESS;
 import static com.example.product.service.exception.ProductErrorMessage.PRODUCT_NOT_FOUND;
+import static com.example.product_common_core.constant.ApiConstant.STATUS_SUCCESS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

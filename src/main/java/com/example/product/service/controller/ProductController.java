@@ -2,13 +2,14 @@ package com.example.product.service.controller;
 
 import com.example.product.service.dto.*;
 import com.example.product.service.service.ProductService;
+import com.example.product_common_core.dto.ResponsePayload;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import static com.example.product.service.constant.ApiConstant.STATUS_SUCCESS;
 import static com.example.product.service.constant.UriConstant.*;
+import static com.example.product_common_core.constant.ApiConstant.STATUS_SUCCESS;
 
 @RestController
 @RequestMapping(API_PRODUCT)

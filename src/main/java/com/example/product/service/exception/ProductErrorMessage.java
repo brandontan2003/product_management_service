@@ -8,8 +8,7 @@ import static com.example.product.service.constant.ErrorConstant.*;
 @Getter
 public enum ProductErrorMessage {
 
-    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, PRODUCT_NOT_FOUND_ERROR_CODE, PRODUCT_NOT_FOUND_ERROR_DESC),
-    FIELD_VALIDATION_ERROR(HttpStatus.BAD_REQUEST, FIELD_VALIDATION_ERROR_CODE, FIELD_VALIDATION_ERROR_DESC);
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, PRODUCT_NOT_FOUND_ERROR_CODE, PRODUCT_NOT_FOUND_ERROR_DESC);
 
     private final HttpStatus httpStatus;
     private final String errorCode;

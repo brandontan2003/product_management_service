@@ -25,6 +25,21 @@ This is a simple CRUD application that uses the REST APIs for Product. It uses t
 | `price`                   | DECIMAL(10, 2) | NOT NULL    |
 | `scheduled_deletion_date` | DATE           |             |
 
+## Pre-requisites
+Before you begin, ensure that you have the following tools and services installed:
+1. **Java**  
+   Ensure that you have **Java 17** installed on your system. You can verify this by running:
+   ```bash
+   java -version
+   ```
+2. **Docker** is used for containerizing the application and managing services through Docker Compose. You can check if Docker is installed with:
+   ```bash
+   docker --version
+   ```
+3. **Product Common Core**  
+   This library contains shared logic, exception handlers, and other core utilities used across the microservices and batch jobs. You can find the repository for the Product Common Core [here](https://github.com/brandontan2003/product_common_core).
+---
+
 ## Setup Instructions
 1. Download Java 17 and verify Gradle installation
    1. Download Java from [Oracle Java](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) or [AdoptOpenJDK](https://adoptium.net/).  

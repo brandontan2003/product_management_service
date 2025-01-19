@@ -4,6 +4,7 @@ import com.example.product.service.dto.*;
 import com.example.product.service.model.Product;
 import com.example.product.service.repository.ProductRepository;
 import com.example.product.service.service.ProductService;
+import com.example.product_common_core.dto.ResponsePayload;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +31,7 @@ import java.util.stream.Stream;
 
 import static com.example.product.service.TestUtils.*;
 import static com.example.product.service.constant.UriConstant.*;
-import static com.example.product.service.constant.UtilityConstant.NULL_IDENTIFIER;
+import static com.example.product_common_core.constant.UtilityConstant.NULL_IDENTIFIER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
