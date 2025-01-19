@@ -24,6 +24,10 @@ repositories {
 	maven { url 'https://repo.spring.io/snapshot' }
 }
 
+ext {
+	LOMBOK_VERSION = '1.18.22'
+}
+
 dependencies {
 	implementation 'org.modelmapper:modelmapper:3.1.0'
 	// https://mvnrepository.com/artifact/commons-io/commons-io
@@ -39,14 +43,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.flywaydb:flyway-core'
 	implementation 'org.flywaydb:flyway-mysql'
-	compileOnly 'org.projectlombok:lombok:1.18.22' // Use the latest version
-	annotationProcessor 'org.projectlombok:lombok:1.18.22'
+	compileOnly "org.projectlombok:lombok:${LOMBOK_VERSION}" // Use the latest version
+	annotationProcessor "org.projectlombok:lombok:${LOMBOK_VERSION}"
 
-	testCompileOnly 'org.projectlombok:lombok:1.18.22'  // For test scope
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'  // For annotation processing in tests
+	testCompileOnly "org.projectlombok:lombok:${LOMBOK_VERSION}"  // For test scope
+	testAnnotationProcessor "org.projectlombok:lombok:${LOMBOK_VERSION}"  // For annotation processing in tests
 
 	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
